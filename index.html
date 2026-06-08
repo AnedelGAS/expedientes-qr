@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registros Médicos - CRUD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#F4F7FC] flex h-screen overflow-hidden relative">
+
+    <aside class="w-72 bg-[#E6EEFA] border-r border-[#D0DEF2] flex flex-col justify-between p-5 flex-shrink-0">
+        <div>
+            <h1 class="text-xl font-semibold text-[#1E3A8A] mb-4 mt-2">Registros Médicos</h1>
+            
+            <div class="relative mb-5">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">🔍</span>
+                <input type="text" id="inputBuscar" placeholder="Buscar usuario..." class="w-full pl-9 pr-4 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div id="listaUsuarios" class="space-y-2 overflow-y-auto max-h-[calc(100vh-200px)]">
+                </div>
+        </div>
+
+        <button id="btnAbrirModal" class="w-full bg-[#1D4ED8] hover:bg-blue-800 text-white font-semibold py-2.5 rounded-lg text-sm transition shadow-md">
+            + Agregar usuario
+        </button>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-10">
+        <div id="vistaExpediente" class="max-w-3xl mx-auto space-y-5">
+            
+            <div class="flex items-center justify-between border-b border-slate-200 pb-5">
+                <div class="flex items-center space-x-4">
+                    <div id="avatarPaciente" class="w-16 h-16 bg-[#1D4ED8] text-white flex items-center justify-center text-2xl font-bold rounded-full shadow-inner">
+                        M
+                    </div>
+                    <div>
+                        <h2 id="nombrePaciente" class="text-2xl font-bold text-slate-800">Cargando...</h2>
+                        <p id="edadPaciente" class="text-sm text-slate-500">-- años</p>
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <button id="btnEditar" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">📝 Editar</button>
+                    <button id="btnEliminar" class="bg-[#DC2626] hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">🗑️ Eliminar</button>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-1.5">🩸 Tipo de Sangre</h3>
+                <div id="sangrePaciente">
+                    </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-1.5">⚠️ Alergias</h3>
+                <div id="alergiasPaciente" class="flex flex-wrap gap-2">
+                    </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-1.5">📈 Padecimientos Crónicos</h3>
+                <div id="padecimientosPaciente" class="flex flex-wrap gap-2">
+                    </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-1.5">📞 Contactos de Emergencia</h3>
+                <div class="bg-[#EFF6FF] border border-blue-100 rounded-lg p-4 flex justify-between items-center">
+                    <div>
+                        <p id="contactoNombre" class="font-semibold text-sm text-slate-800">--</p>
+                        <p id="contactoRelacion" class="text-xs text-slate-500">--</p>
+                    </div>
+                    <span id="contactoTel" class="text-sm font-medium text-[#1E4ED8]">📞 --</span>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <h3 class="text-sm font-semibold text-slate-800 mb-2 flex items-center gap-1.5">📄 Notas Adicionales</h3>
+                <p id="notasPaciente" class="text-sm text-slate-600 leading-relaxed">--</p>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <h3 class="text-sm font-semibold text-slate-800 mb-4 flex items-center gap-1.5">📱 Código QR del Paciente</h3>
+                <div class="flex items-start md:items-center space-y-4 md:space-y-0 flex-col md:flex-row">
+                    <div class="w-36 h-36 bg-slate-50 border border-slate-200 rounded-lg p-1 flex-shrink-0 flex items-center justify-center shadow-sm">
+                        <img id="qrPaciente" src="" alt="Código QR" class="w-full h-full object-contain hidden">
+                        <div id="qrPlaceholder" class="w-full h-full bg-slate-200 rounded animate-pulse"></div>
+                    </div>
+                    
+                    <div class="md:ml-6 flex-1">
+                        <p class="text-xs font-medium text-slate-600 mb-2">Al escanear este código accedes al expediente completo:</p>
+                        <ul class="text-xs text-slate-500 space-y-1 mb-4 list-disc list-inside">
+                            <li>Nombre completo y edad</li>
+                            <li>Tipo de sangre (con búsqueda web)</li>
+                            <li>Alergias ordenadas (con búsqueda web)</li>
+                            <li>Contactos de emergencia</li>
+                        </ul>
+                        <div class="flex gap-2">
+                            <a id="btnDescargarQR" href="#" download="qr-expediente.png" class="bg-[#1E3A8A] hover:bg-blue-900 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm text-center">📥 Descargar QR</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+
+    <div id="modalNuevoUsuario" class="hidden fixed inset-0 bg-black/30 backdrop-blur-[2px] flex justify-end z-50">
+        <div class="w-[520px] bg-white h-full shadow-2xl flex flex-col justify-between p-6 overflow-y-auto border-l border-slate-200">
+            <div>
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                    <h2 id="modalTitulo" class="text-xl font-bold text-[#1E3A8A]">Nuevo usuario</h2>
+                    <button id="btnCerrarX" class="text-slate-400 hover:text-slate-600 text-sm font-medium p-1 transition">✕</button>
+                </div>
+
+                <form id="formUsuario" class="space-y-5">
+                    <input type="hidden" id="editUserId">
+                    
+                    <div class="grid grid-cols-12 gap-4">
+                        <div class="col-span-8">
+                            <label class="block text-sm font-semibold text-[#1E3A8A] mb-1.5">Nombre completo *</label>
+                            <input type="text" id="formNombre" required placeholder="Ej. Juan Pérez" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2.5 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                        </div>
+                        <div class="col-span-4">
+                            <label class="block text-sm font-semibold text-[#1E3A8A] mb-1.5">Edad</label>
+                            <input type="text" id="formEdad" placeholder="Ej. 35" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2.5 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-[#1E3A8A] mb-1.5">Tipo de sangre</label>
+                        <div class="relative">
+                            <select id="formSangre" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2.5 text-sm text-slate-700 appearance-none focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                            </select>
+                            <span class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400 text-xs">▼</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-[#1E3A8A] mb-1.5">Alergias (separadas por comas)</label>
+                        <input type="text" id="formAlergias" list="listaSugerenciasAlergias" placeholder="Ej. Mariscos, Penicilina, Maní" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2.5 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                        <datalist id="listaSugerenciasAlergias">
+                            <option value="Mariscos"></option>
+                            <option value="Penicilina"></option>
+                            <option value="Polen"></option>
+                            <option value="Látex"></option>
+                            <option value="Maní"></option>
+                            <option value="Nueces"></option>
+                            <option value="Leche"></option>
+                            <option value="Huevo"></option>
+                            <option value="Soja"></option>
+                            <option value="Trigo"></option>
+                            <option value="Picadura de abeja"></option>
+                            <option value="Ácaros"></option>
+                            <option value="Aspirina"></option>
+                        </datalist>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-[#1E3A8A] mb-1.5">Padecimientos crónicos (separados por comas)</label>
+                        <input type="text" id="formPadecimientos" list="listaSugerenciasPadecimientos" placeholder="Ej. Diabetes tipo 2, Hipertensión" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2.5 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                        <datalist id="listaSugerenciasPadecimientos">
+                            <option value="Diabetes tipo 2"></option>
+                            <option value="Diabetes tipo 1"></option>
+                            <option value="Hipertensión"></option>
+                            <option value="Asma"></option>
+                            <option value="Hipotiroidismo"></option>
+                            <option value="Hipertiroidismo"></option>
+                            <option value="Artritis reumatoide"></option>
+                            <option value="Insuficiencia renal"></option>
+                            <option value="Epilepsia"></option>
+                            <option value="Migraña"></option>
+                            <option value="Cardiopatía isquémica"></option>
+                            <option value="Enfermedad celíaca"></option>
+                            <option value="Anemia crónica"></option>
+                            <option value="Lupus"></option>
+                        </datalist>
+                    </div>
+
+                    <div class="space-y-3">
+                        <span class="text-sm font-semibold text-[#1E3A8A] block">Contacto de emergencia</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="formContNombre" placeholder="Nombre contacto" class="bg-[#EFF4FC] border border-transparent rounded-xl px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                            <input type="text" id="formContRelacion" placeholder="Parentesco (Ej. Esposo)" class="bg-[#EFF4FC] border border-transparent rounded-xl px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                        </div>
+                        <input type="text" id="formContTel" placeholder="Teléfono" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-[#1E3A8A] mb-1.5">Notas adicionales</label>
+                        <textarea id="formNotas" placeholder="Información adicional relevante..." rows="3" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl p-4 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition resize-none"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="flex justify-end gap-3 border-t border-slate-100 pt-4 mt-6">
+                <button id="btnCancelar" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium px-5 py-2.5 rounded-xl text-sm transition shadow-sm">Cancelar</button>
+                <button type="submit" form="formUsuario" id="btnGuardar" class="bg-[#1D4ED8] hover:bg-blue-800 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition shadow-md">Guardar usuario</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { obtenerDefinicion } from './js/conectorMedico.js';
+
+        // =========================================================================
+        // 💾 PERSISTENCIA: Base de Datos Inicializada o Cargada desde LocalStorage
+        // =========================================================================
+        const usuariosSemilla = [
+            {
+                id: 1,
+                nombre: "María García",
+                edad: "34",
+                sangre: "A+",
+                alergias: ["Mariscos", "Penicilina"],
+                padecimientos: ["Diabetes tipo 2", "Hipertensión"],
+                contacto: { nombre: "Carlos García", relacion: "Esposo", tel: "+52 55 1234 5678" },
+                notas: "Paciente con control médico mensual. Toma metformina 500mg."
+            },
+            {
+                id: 2,
+                nombre: "Roberto Méndez",
+                edad: "45",
+                sangre: "O-",
+                alergias: ["Polen"],
+                padecimientos: ["Asma"],
+                contacto: { nombre: "Laura Méndez", relacion: "Hermana", tel: "+52 55 8765 4321" },
+                notas: "Usa inhalador de rescate en caso de crisis estacionales."
+            },
+            {
+                id: 3,
+                nombre: "Sofía Ramírez",
+                edad: "28",
+                sangre: "B+",
+                alergias: [],
+                padecimientos: [],
+                contacto: { nombre: "Pedro Ramírez", relacion: "Padre", tel: "+52 55 5555 1234" },
+                notas: "Sin observaciones médicas relevantes hasta la fecha."
+            }
+        ];
+
+        // Si no existen usuarios guardados previamente, cargamos los datos semilla
+        if (!localStorage.getItem('usuariosMedicos')) {
+            localStorage.setItem('usuariosMedicos', JSON.stringify(usuariosSemilla));
+        }
+
+        // Nuestra fuente de verdad ahora es el LocalStorage
+        let usuarios = JSON.parse(localStorage.getItem('usuariosMedicos'));
+
+        let usuarioSeleccionadoId = usuarios.length ? usuarios[0].id : null;
+        let modoEdicion = false;
+
+        // Elementos del DOM
+        const listaUsuarios = document.getElementById('listaUsuarios');
+        const inputBuscar = document.getElementById('inputBuscar');
+        const modal = document.getElementById('modalNuevoUsuario');
+        const formUsuario = document.getElementById('formUsuario');
+        
+        const nombrePaciente = document.getElementById('nombrePaciente');
+        const edadPaciente = document.getElementById('edadPaciente');
+        const avatarPaciente = document.getElementById('avatarPaciente');
+        const sangrePaciente = document.getElementById('sangrePaciente');
+        const alergiasPaciente = document.getElementById('alergiasPaciente');
+        const padecimientosPaciente = document.getElementById('padecimientosPaciente');
+        const contactoNombre = document.getElementById('contactoNombre');
+        const contactoRelacion = document.getElementById('contactoRelacion');
+        const contactoTel = document.getElementById('contactoTel');
+        const notasPaciente = document.getElementById('notasPaciente');
+        const qrPaciente = document.getElementById('qrPaciente');
+        const qrPlaceholder = document.getElementById('qrPlaceholder');
+        const btnDescargarQR = document.getElementById('btnDescargarQR');
+
+        // Función auxiliar para actualizar LocalStorage de forma centralizada
+        function guardarEnLocalStorage() {
+            localStorage.setItem('usuariosMedicos', JSON.stringify(usuarios));
+        }
+
+        window.mostrarInfoMedica = function(elemento, termino) {
+            const definicion = obtenerDefinicion(termino);
+            alert(`📘 Información Médica:\n\n"${termino}": ${definicion}`);
+        };
+
+        // Renderizar Lista Lateral (Read)
+        function renderLista(filtro = "") {
+            listaUsuarios.innerHTML = "";
+            const filtrados = usuarios.filter(u => u.nombre.toLowerCase().includes(filtro.toLowerCase()));
+
+            filtrados.forEach(usuario => {
+                const esSeleccionado = usuario.id === usuarioSeleccionadoId;
+                const item = document.createElement('div');
+                item.className = esSeleccionado 
+                    ? "bg-[#1D4ED8] text-white p-3 rounded-lg shadow-sm cursor-pointer"
+                    : "hover:bg-slate-200 p-3 rounded-lg cursor-pointer transition text-slate-700";
+                
+                item.innerHTML = `
+                    <p class="font-semibold text-sm">${usuario.nombre}</p>
+                    <p class="text-xs ${esSeleccionado ? 'text-blue-200' : 'text-slate-500'} mt-0.5">Tipo ${usuario.sangre || 'N/A'}</p>
+                `;
+
+                item.addEventListener('click', () => {
+                    usuarioSeleccionadoId = usuario.id;
+                    renderLista(inputBuscar.value);
+                    cargarExpediente();
+                });
+
+                listaUsuarios.appendChild(item);
+            });
+        }
+
+        // Cargar Expediente en Pantalla (Read)
+        function cargarExpediente() {
+            const usuario = usuarios.find(u => u.id === usuarioSeleccionadoId);
+            if (!usuario) {
+                document.getElementById('vistaExpediente').classList.add('hidden');
+                return;
+            }
+            document.getElementById('vistaExpediente').classList.remove('hidden');
+
+            nombrePaciente.innerText = usuario.nombre;
+            edadPaciente.innerText = `${usuario.edad || '--'} años`;
+            avatarPaciente.innerText = usuario.nombre.charAt(0).toUpperCase();
+            notasPaciente.innerText = usuario.notas || "Sin notas adicionales.";
+
+            sangrePaciente.innerHTML = `
+                <button onclick="mostrarInfoMedica(this, '${usuario.sangre}')" class="inline-flex items-center bg-[#1E3A8A] text-white text-xs font-bold px-3 py-1.5 rounded-full hover:bg-blue-900 transition">
+                    ${usuario.sangre} <span class="ml-1 text-[10px]">ℹ️</span>
+                </button>
+            `;
+
+            alergiasPaciente.innerHTML = usuario.alergias.length 
+                ? usuario.alergias.map(a => `
+                    <button onclick="mostrarInfoMedica(this, '${a}')" class="inline-flex items-center bg-[#DBEAFE] text-[#1E4ED8] text-xs font-medium px-3 py-1.5 rounded-full hover:bg-blue-200 transition">
+                        ${a} <span class="ml-1 text-[10px] opacity-75">ℹ️</span>
+                    </button>`).join('')
+                : '<span class="text-xs text-slate-400 italic">Ninguna</span>';
+
+            padecimientosPaciente.innerHTML = usuario.padecimientos.length
+                ? usuario.padecimientos.map(p => `
+                    <button onclick="mostrarInfoMedica(this, '${p}')" class="inline-flex items-center bg-[#1E3A8A] text-white text-xs font-medium px-3 py-1.5 rounded-full hover:bg-blue-900 transition">
+                        ${p} <span class="ml-1 text-[10px]">ℹ️</span>
+                    </button>`).join('')
+                : '<span class="text-xs text-slate-400 italic">Ninguno</span>';
+
+            contactoNombre.innerText = usuario.contacto?.nombre || "No asignado";
+            contactoRelacion.innerText = usuario.contacto?.relacion || "";
+            contactoTel.innerText = usuario.contacto?.tel ? `📞 ${usuario.contacto.tel}` : "📞 --";
+
+            // ----------------========================================================
+            // 🌐 CONSTRUCCIÓN DEL QR GLOBAL Y AUTÓNOMO
+            // ----------------========================================================
+            qrPaciente.classList.add('hidden');
+            qrPlaceholder.classList.remove('hidden');
+
+            // Detecta dinámicamente si estás en localhost o en producción (Internet real)
+            const baseServerUrl = window.location.origin;
+            const pathname = window.location.pathname;
+            const rutaLimpia = pathname.substring(0, pathname.lastIndexOf('/'));
+
+            // Dirección final absoluta estructurada con el ID del usuario
+            const urlDestino = `${baseServerUrl}${rutaLimpia}/ver_expediente.html?id=${usuario.id}`;
+            const qrData = encodeURIComponent(urlDestino);
+
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}`;
+
+            qrPaciente.src = qrUrl;
+            btnDescargarQR.href = qrUrl;
+
+            qrPaciente.onload = () => {
+                qrPlaceholder.classList.add('hidden');
+                qrPaciente.classList.remove('hidden');
+            };
+        }
+
+        // Control del Modal
+        document.getElementById('btnAbrirModal').addEventListener('click', () => {
+            modoEdicion = false;
+            document.getElementById('modalTitulo').innerText = "Nuevo usuario";
+            formUsuario.reset();
+            document.getElementById('editUserId').value = "";
+            modal.classList.remove('hidden');
+        });
+
+        const cerrarModal = () => modal.classList.add('hidden');
+        document.getElementById('btnCerrarX').addEventListener('click', cerrarModal);
+        document.getElementById('btnCancelar').addEventListener('click', cerrarModal);
+
+        // Guardar o Actualizar (Create & Update con Persistencia)
+        formUsuario.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const alergiasArr = document.getElementById('formAlergias').value.split(',').map(s => s.trim()).filter(s => s !== "");
+            const padecimientosArr = document.getElementById('formPadecimientos').value.split(',').map(s => s.trim()).filter(s => s !== "");
+
+            const datosUsuario = {
+                nombre: document.getElementById('formNombre').value,
+                edad: document.getElementById('formEdad').value,
+                sangre: document.getElementById('formSangre').value,
+                alergias: alergiasArr,
+                padecimientos: padecimientosArr,
+                contacto: {
+                    nombre: document.getElementById('formContNombre').value,
+                    relacion: document.getElementById('formContRelacion').value,
+                    tel: document.getElementById('formContTel').value
+                },
+                notas: document.getElementById('formNotas').value
+            };
+
+            if (modoEdicion) {
+                const id = parseInt(document.getElementById('editUserId').value);
+                const index = usuarios.findIndex(u => u.id === id);
+                if (index !== -1) {
+                    usuarios[index] = { id, ...datosUsuario };
+                }
+            } else {
+                const nuevoId = usuarios.length ? Math.max(...usuarios.map(u => u.id)) + 1 : 1;
+                usuarios.push({ id: nuevoId, ...datosUsuario });
+                usuarioSeleccionadoId = nuevoId;
+            }
+
+            // Guardamos los cambios estructurales en el navegador
+            guardarEnLocalStorage();
+            cerrarModal();
+            renderLista(inputBuscar.value);
+            cargarExpediente();
+        });
+
+        // Cargar datos al Editar
+        document.getElementById('btnEditar').addEventListener('click', () => {
+            const usuario = usuarios.find(u => u.id === usuarioSeleccionadoId);
+            if (!usuario) return;
+
+            modoEdicion = true;
+            document.getElementById('modalTitulo').innerText = "Editar usuario";
+            document.getElementById('editUserId').value = usuario.id;
+            
+            document.getElementById('formNombre').value = usuario.nombre;
+            document.getElementById('formEdad').value = usuario.edad;
+            document.getElementById('formSangre').value = usuario.sangre;
+            document.getElementById('formAlergias').value = usuario.alergias.join(', ');
+            document.getElementById('formPadecimientos').value = usuario.padecimientos.join(', ');
+            document.getElementById('formContNombre').value = usuario.contacto?.nombre || "";
+            document.getElementById('formContRelacion').value = usuario.contacto?.relacion || "";
+            document.getElementById('formContTel').value = usuario.contacto?.tel || "";
+            document.getElementById('formNotas').value = usuario.notas || "";
+
+            modal.classList.remove('hidden');
+        });
+
+        // Eliminar (Delete con Persistencia)
+        document.getElementById('btnEliminar').addEventListener('click', () => {
+            if (confirm("¿Estás seguro de que deseas eliminar este expediente médico?")) {
+                usuarios = usuarios.filter(u => u.id !== usuarioSeleccionadoId);
+                usuarioSeleccionadoId = usuarios.length ? usuarios[0].id : null;
+                
+                guardarEnLocalStorage();
+                renderLista(inputBuscar.value);
+                cargarExpediente();
+            }
+        });
+
+        // Buscador
+        inputBuscar.addEventListener('input', (e) => {
+            renderLista(e.target.value);
+        });
+
+        // Inicialización
+        renderLista();
+        cargarExpediente();
+    </script>
+</body>
+</html>

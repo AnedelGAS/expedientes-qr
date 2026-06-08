@@ -39,7 +39,7 @@ const diccionarioMedico = {
     "hipertension": "Trastorno cardiovascular donde la presión arterial sistólica/diastólica se eleva de forma sostenida, dañando vasos sanguíneos y corazón.",
     "asma": "Afección inflamatoria crónica de las vías respiratorias que produce sibilancias, disnea, opresión en el pecho y tos.",
     "hipotiroidismo": "Deficiencia hormonal causada por una actividad subóptima de la glándula tiroides, ralentizando el metabolismo general.",
-    "hipertiroidismo": "Producción excesiva de hormonas tiroideas que acelera el metabolismo del cuerpo, causando pérdida de peso y taquicardias.",
+    "hipertiroidismo": "Producción excessive de hormonas tiroideas que acelera el metabolismo del cuerpo, causando pérdida de peso y taquicardias.",
     "artritis reumatoide": "Enfermedad inflamatoria autoinmune crónica que afecta principalmente a las articulaciones, causando dolor, hinchazón y deformidad.",
     "insuficiencia renal": "Pérdida progresiva de la capacidad de los riñones para filtrar los desechos del flujo sanguíneo, requiriendo control estricto o diálisis.",
     "epilepsia": "Trastorno del sistema nervioso central en el que la actividad cerebral se altera, provocando convulsiones o períodos de comportamiento inusual.",
@@ -47,7 +47,27 @@ const diccionarioMedico = {
     "cardiopatia isquemica": "Enfermedad caracterizada por el estrechamiento de las arterias coronarias, lo que disminuye el flujo de oxígeno al músculo cardíaco.",
     "enfermedad celiaca": "Afección autoinmune digestiva grave donde el consumo de gluten daña el revestimiento del intestino delgado, impidiendo la absorción de nutrientes.",
     "anemia cronica": "Disminución prolongada de la masa de glóbulos rojos o de los niveles de hemoglobina, limitando el transporte de oxígeno en el cuerpo.",
-    "lupus": "Enfermedad autoinmune sistémica en la que el sistema inmunitario ataca por error a los tejidos sanos, como la piel, articulaciones y riñones."
+    "lupus": "Enfermedad autoinmune sistémica en la que el sistema inmunitario ataca por error a los tejidos sanos, como la piel, articulaciones y riñones.",
+    "epoc": "Enfermedad Pulmonar Obstructiva Crónica que causa la limitación del flujo de aire y problemas respiratorios progresivos, comúnmente asociada al tabaquismo.",
+    "insuficiencia cardiaca": "Incapacidad crónica del corazón para bombear sangre eficientemente, lo que reduce el suministro de oxígeno a los tejidos y genera fatiga o retención de líquidos.",
+    "fibromialgia": "Trastorno crónico caracterizado por dolor musculoesquelético generalizado, fatiga persistente, problemas de sueño y alteraciones del estado de ánimo.",
+    "esclerosis multiple": "Enfermedad autoinmune y desmielinizante del sistema nervioso central que interrumpe la comunicación entre el cerebro y el resto del cuerpo.",
+    "enfermedad de crohn": "Proceso inflamatorio crónico del tracto digestivo de naturaleza autoinmune, capaz de afectar cualquier tramo desde la boca hasta el ano.",
+    "colitis ulcerosa": "Enfermedad inflamatoria intestinal de curso crónico que produce inflamación prolongada y úlceras en la mucosa profunda del colon y el recto.",
+    "osteoporosis": "Afección ósea metabólica caracterizada por la disminución de la densidad de la masa ósea, lo que debilita los huesos y eleva exponencialmente el riesgo de fracturas.",
+    "parkinson": "Trastorno neurológico degenerativo y progresivo que afecta el sistema motor debido a la pérdida de neuronas productoras de dopamina en el cerebro.",
+    "alzheimer": "Forma progresiva de demencia que destruye gradualmente la memoria, las capacidades cognitivas y la aptitud para realizar las tareas cotidianas más simples.",
+    "insuficiencia venosa": "Alteración vascular donde las venas de las extremidades inferiores presentan dificultad para retornar la sangre adecuadamente hacia el corazón, causando várices y edema.",
+    "hipercolesterolemia": "Presencia de niveles anormalmente elevados de colesterol en sangre, incrementando significativamente el riesgo de aterosclerosis y eventos cardiovasculares.",
+    "higado graso no alcoholico": "Acumulación excesiva de lípidos en las células hepáticas que no está vinculada al consumo de alcohol, asociada frecuentemente a la obesidad y el síndrome metabólico.",
+    "apnea del sueño": "Trastorno respiratorio nocturno caracterizado por interrupciones repetidas de la respiración durante el sueño debido al colapso temporal de las vías aéreas superiores.",
+    "gota": "Forma dolorosa de artritis reactiva provocada por la cristalización y acumulación de ácido úrico en el interior y alrededor de las articulaciones.",
+    "psoriasis": "Afección cutánea inflamatoria de origen inmunitario que acelera el ciclo de vida de las células de la piel, provocando la aparición de placas escamosas y prurito.",
+    "ansiedad cronica": "Trastorno emocional prolongado caracterizado por una preocupación y un miedo excesivos, persistentes y difíciles de controlar ante situaciones cotidianas.",
+    "depresion mayor": "Trastorno del estado de ánimo grave y recurrente que causa sentimientos persistentes de tristeza, pérdida de interés y una alteración funcional en el día a día.",
+    "arritmia cardiaca": "Cualquier alteración en el ritmo o frecuencia de los latidos del corazón, haciendo que este lata de manera demasiado rápida, lenta o irregular.",
+    "glaucoma": "Grupo de afecciones oculares que dañan progresivamente el nervio óptico, a menudo debido a una presión intraocular anormalmente alta, siendo causa principal de ceguera.",
+    "vih": "Virus de la Inmunodeficiencia Humana que ataca y destruye las células del sistema inmunitario (linfocitos T CD4), debilitando las defenses del organismo ante infecciones."
 };
 
 /**

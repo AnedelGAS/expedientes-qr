@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registros Médicos - CRUD</title>
+    <title>Registros Médicos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -22,7 +22,7 @@
             </div>
 
             <div id="listaUsuarios" class="space-y-2 overflow-y-auto max-h-[calc(100vh-200px)]">
-                </div>
+            </div>
         </div>
 
         <button id="btnAbrirModal" class="w-full bg-[#1D4ED8] hover:bg-blue-800 text-white font-semibold py-2.5 rounded-lg text-sm transition shadow-md">
@@ -49,22 +49,27 @@
                 </div>
             </div>
 
+            <div class="bg-red-50 border-l-4 border-red-500 rounded-r-xl p-5 shadow-sm">
+                <h3 class="text-sm font-bold text-red-800 mb-1 flex items-center gap-1.5 uppercase tracking-wide">🏥 Hospital de Traslado / Preferencia</h3>
+                <p id="hospitalPaciente" class="text-base font-semibold text-gray-900 leading-relaxed">--</p>
+            </div>
+
             <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
                 <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-1.5">🩸 Tipo de Sangre</h3>
                 <div id="sangrePaciente">
-                    </div>
+                </div>
             </div>
 
             <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
                 <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-1.5">⚠️ Alergias</h3>
                 <div id="alergiasPaciente" class="flex flex-wrap gap-2">
-                    </div>
+                </div>
             </div>
 
             <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
                 <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-1.5">📈 Padecimientos Crónicos</h3>
                 <div id="padecimientosPaciente" class="flex flex-wrap gap-2">
-                    </div>
+                </div>
             </div>
 
             <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
@@ -95,6 +100,7 @@
                         <p class="text-xs font-medium text-slate-600 mb-2">Al escanear este código accedes al expediente completo:</p>
                         <ul class="text-xs text-slate-500 space-y-1 mb-4 list-disc list-inside">
                             <li>Nombre completo y edad</li>
+                            <li>Hospital de preferencia asignado</li>
                             <li>Tipo de sangre (con búsqueda web)</li>
                             <li>Alergias ordenadas (con búsqueda web)</li>
                             <li>Contactos de emergencia</li>
@@ -109,7 +115,6 @@
         </div>
     </main>
 
-
     <div id="modalNuevoUsuario" class="hidden fixed inset-0 bg-black/30 backdrop-blur-[2px] flex justify-end z-50">
         <div class="w-[520px] bg-white h-full shadow-2xl flex flex-col justify-between p-6 overflow-y-auto border-l border-slate-200">
             <div>
@@ -118,7 +123,7 @@
                     <button id="btnCerrarX" class="text-slate-400 hover:text-slate-600 text-sm font-medium p-1 transition">✕</button>
                 </div>
 
-                <form id="formUsuario" class="space-y-5">
+                <form id="formUsuario" class="space-y-5" onkeydown="return event.key != 'Enter';">
                     <input type="hidden" id="editUserId">
                     
                     <div class="grid grid-cols-12 gap-4">
@@ -135,7 +140,7 @@
                     <div>
                         <label class="block text-sm font-semibold text-[#1E3A8A] mb-1.5">Tipo de sangre</label>
                         <div class="relative">
-                            <select id="formSangre" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2.5 text-sm text-slate-700 appearance-none focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                            <select id="formSangre" title="Tipo de sangre" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2.5 text-sm text-slate-700 appearance-none focus:outline-none focus:bg-white focus:border-blue-400 transition">
                                 <option value="A+">A+</option>
                                 <option value="A-">A-</option>
                                 <option value="B+">B+</option>
@@ -150,8 +155,18 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-[#1E3A8A] mb-1.5">Alergias (separadas por comas)</label>
-                        <input type="text" id="formAlergias" list="listaSugerenciasAlergias" placeholder="Ej. Mariscos, Penicilina, Maní" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2.5 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                        <label class="block text-sm font-semibold text-[#1E3A8A] mb-1.5">Hospital de Traslado / Preferencia</label>
+                        <input type="text" id="formHospital" placeholder="Ej. Hospital General de Especialidades, IMSS Clínica 1" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2.5 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-[#1E3A8A] mb-1.5">Alergias</label>
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" id="inputAlergiaTemporal" list="listaSugerenciasAlergias" placeholder="Escribe o selecciona una alergia..." class="flex-1 bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                            <button type="button" id="btnAgregarAlergia" class="bg-[#1E3A8A] hover:bg-blue-900 text-white text-sm px-4 rounded-xl transition font-medium">+</button>
+                        </div>
+                        <div id="contenedorTagsAlergias" class="flex flex-wrap gap-1.5 min-h-[32px] p-1 bg-slate-50 border border-dashed border-slate-200 rounded-xl"></div>
+                        
                         <datalist id="listaSugerenciasAlergias">
                             <option value="Mariscos"></option>
                             <option value="Penicilina"></option>
@@ -170,8 +185,13 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-[#1E3A8A] mb-1.5">Padecimientos crónicos (separados por comas)</label>
-                        <input type="text" id="formPadecimientos" list="listaSugerenciasPadecimientos" placeholder="Ej. Diabetes tipo 2, hipertensión" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2.5 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                        <label class="block text-sm font-semibold text-[#1E3A8A] mb-1.5">Padecimientos crónicos</label>
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" id="inputPadecimientoTemporal" list="listaSugerenciasPadecimientos" placeholder="Escribe o selecciona un padecimiento..." class="flex-1 bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                            <button type="button" id="btnAgregarPadecimiento" class="bg-[#1E3A8A] hover:bg-blue-900 text-white text-sm px-4 rounded-xl transition font-medium">+</button>
+                        </div>
+                        <div id="contenedorTagsPadecimientos" class="flex flex-wrap gap-1.5 min-h-[32px] p-1 bg-slate-50 border border-dashed border-slate-200 rounded-xl"></div>
+
                         <datalist id="listaSugerenciasPadecimientos">
                             <option value="Diabetes tipo 2"></option>
                             <option value="Diabetes tipo 1"></option>
@@ -225,16 +245,18 @@
                 nombre: "María García",
                 edad: "34",
                 sangre: "A+",
+                hospital: "Hospital General de Especialidades Dr. Javier Buenfil Osorio",
                 alergias: ["Mariscos", "Penicilina"],
                 padecimientos: ["Diabetes tipo 2", "Hipertensión"],
                 contacto: { nombre: "Carlos García", relacion: "Esposo", tel: "+52 55 1234 5678" },
-                notas: "Paciente con control médico mensual. Toma metformina 500mg."
+                notes: "Paciente con control médico mensual. Toma metformina 500mg."
             },
             {
                 id: 2,
                 nombre: "Roberto Méndez",
                 edad: "45",
                 sangre: "O-",
+                hospital: "Hospital General de Zona N1 IMSS",
                 alergias: ["Polen"],
                 padecimientos: ["Asma"],
                 contacto: { nombre: "Laura Méndez", relacion: "Hermana", tel: "+52 55 8765 4321" },
@@ -245,6 +267,7 @@
                 nombre: "Sofía Ramírez",
                 edad: "28",
                 sangre: "B+",
+                hospital: "",
                 alergias: [],
                 padecimientos: [],
                 contacto: { nombre: "Pedro Ramírez", relacion: "Padre", tel: "+52 55 5555 1234" },
@@ -252,16 +275,17 @@
             }
         ];
 
-        // Si no existen usuarios guardados previamente, cargamos los datos semilla
         if (!localStorage.getItem('usuariosMedicos')) {
             localStorage.setItem('usuariosMedicos', JSON.stringify(usuariosSemilla));
         }
 
-        // Nuestra fuente de verdad ahora es el LocalStorage
         let usuarios = JSON.parse(localStorage.getItem('usuariosMedicos'));
-
         let usuarioSeleccionadoId = usuarios.length ? usuarios[0].id : null;
         let modoEdicion = false;
+
+        // Arreglos de control temporal para el Modal
+        let listaAlergiasTemporales = [];
+        let listaPadecimientosTemporales = [];
 
         // Elementos del DOM
         const listaUsuarios = document.getElementById('listaUsuarios');
@@ -272,6 +296,7 @@
         const nombrePaciente = document.getElementById('nombrePaciente');
         const edadPaciente = document.getElementById('edadPaciente');
         const avatarPaciente = document.getElementById('avatarPaciente');
+        const hospitalPaciente = document.getElementById('hospitalPaciente');
         const sangrePaciente = document.getElementById('sangrePaciente');
         const alergiasPaciente = document.getElementById('alergiasPaciente');
         const padecimientosPaciente = document.getElementById('padecimientosPaciente');
@@ -283,7 +308,15 @@
         const qrPlaceholder = document.getElementById('qrPlaceholder');
         const btnDescargarQR = document.getElementById('btnDescargarQR');
 
-        // Función auxiliar para actualizar LocalStorage de forma centralizada
+        // Nuevos Elementos para control de etiquetas dinámicas
+        const inputAlergiaTemporal = document.getElementById('inputAlergiaTemporal');
+        const btnAgregarAlergia = document.getElementById('btnAgregarAlergia');
+        const contenedorTagsAlergias = document.getElementById('contenedorTagsAlergias');
+
+        const inputPadecimientoTemporal = document.getElementById('inputPadecimientoTemporal');
+        const btnAgregarPadecimiento = document.getElementById('btnAgregarPadecimiento');
+        const contenedorTagsPadecimientos = document.getElementById('contenedorTagsPadecimientos');
+
         function guardarEnLocalStorage() {
             localStorage.setItem('usuariosMedicos', JSON.stringify(usuarios));
         }
@@ -293,7 +326,7 @@
             alert(`📘 Información Médica:\n\n"${termino}": ${definicion}`);
         };
 
-        // Renderizar Lista Lateral (Read)
+        // Renderizar Lista Lateral
         function renderLista(filtro = "") {
             listaUsuarios.innerHTML = "";
             const filtrados = usuarios.filter(u => u.nombre.toLowerCase().includes(filtro.toLowerCase()));
@@ -320,7 +353,7 @@
             });
         }
 
-        // Cargar Expediente en Pantalla (Read)
+        // Cargar Expediente en Pantalla
         function cargarExpediente() {
             const usuario = usuarios.find(u => u.id === usuarioSeleccionadoId);
             if (!usuario) {
@@ -332,7 +365,12 @@
             nombrePaciente.innerText = usuario.nombre;
             edadPaciente.innerText = `${usuario.edad || '--'} años`;
             avatarPaciente.innerText = usuario.nombre.charAt(0).toUpperCase();
-            notasPaciente.innerText = usuario.notas || "Sin notas adicionales.";
+            notasPaciente.innerText = usuario.notes || usuario.notas || "Sin notas adicionales.";
+            
+            // Renderizar campo del hospital asignado
+            hospitalPaciente.innerText = usuario.hospital && usuario.hospital.trim() !== "" 
+                ? usuario.hospital 
+                : "No especificado (Trasladar a la clínica de urgencias más cercana)";
 
             sangrePaciente.innerHTML = `
                 <button onclick="mostrarInfoMedica(this, '${usuario.sangre}')" class="inline-flex items-center bg-[#1E3A8A] text-white text-xs font-bold px-3 py-1.5 rounded-full hover:bg-blue-900 transition">
@@ -340,14 +378,14 @@
                 </button>
             `;
 
-            alergiasPaciente.innerHTML = usuario.alergias.length 
+            alergiasPaciente.innerHTML = usuario.alergias && usuario.alergias.length 
                 ? usuario.alergias.map(a => `
                     <button onclick="mostrarInfoMedica(this, '${a}')" class="inline-flex items-center bg-[#DBEAFE] text-[#1E4ED8] text-xs font-medium px-3 py-1.5 rounded-full hover:bg-blue-200 transition">
                         ${a} <span class="ml-1 text-[10px] opacity-75">ℹ️</span>
                     </button>`).join('')
                 : '<span class="text-xs text-slate-400 italic">Ninguna</span>';
 
-            padecimientosPaciente.innerHTML = usuario.padecimientos.length
+            padecimientosPaciente.innerHTML = usuario.padecimientos && usuario.padecimientos.length
                 ? usuario.padecimientos.map(p => `
                     <button onclick="mostrarInfoMedica(this, '${p}')" class="inline-flex items-center bg-[#1E3A8A] text-white text-xs font-medium px-3 py-1.5 rounded-full hover:bg-blue-900 transition">
                         ${p} <span class="ml-1 text-[10px]">ℹ️</span>
@@ -358,18 +396,14 @@
             contactoRelacion.innerText = usuario.contacto?.relacion || "";
             contactoTel.innerText = usuario.contacto?.tel ? `📞 ${usuario.contacto.tel}` : "📞 --";
 
-            // ----------------========================================================
-            // 🌐 CONSTRUCCIÓN DEL QR GLOBAL Y AUTÓNOMO
-            // ----------------========================================================
+            // Control de código QR
             qrPaciente.classList.add('hidden');
             qrPlaceholder.classList.remove('hidden');
 
-            // Detecta dinámicamente si estás en localhost o en producción (Internet real)
             const baseServerUrl = window.location.origin;
             const pathname = window.location.pathname;
             const rutaLimpia = pathname.substring(0, pathname.lastIndexOf('/'));
 
-            // Dirección final absoluta estructurada con el ID del usuario
             const urlDestino = `${baseServerUrl}${rutaLimpia}/ver_expediente.html?id=${usuario.id}`;
             const qrData = encodeURIComponent(urlDestino);
 
@@ -384,12 +418,93 @@
             };
         }
 
-        // Control del Modal
+        // =========================================================================
+        // 🏷️ GESTIÓN DE ETIQUETAS DINÁMICAS (TAGS) EN EL MODAL
+        // =========================================================================
+        function renderTagsAlergias() {
+            contenedorTagsAlergias.innerHTML = "";
+            listaAlergiasTemporales.forEach((alergia, index) => {
+                const tag = document.createElement('span');
+                tag.className = "inline-flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-lg gap-1";
+                tag.innerHTML = `
+                    ${alergia}
+                    <button type="button" class="text-blue-400 hover:text-blue-600 font-bold ml-0.5 focus:outline-none" data-index="${index}">✕</button>
+                `;
+                tag.querySelector('button').addEventListener('click', () => {
+                    listaAlergiasTemporales.splice(index, 1);
+                    renderTagsAlergias();
+                });
+                contenedorTagsAlergias.appendChild(tag);
+            });
+        }
+
+        function agregarAlergiaDesdeInput() {
+            const valor = inputAlergiaTemporal.value.trim();
+            if (valor !== "" && !listaAlergiasTemporales.includes(valor)) {
+                listaAlergiasTemporales.push(valor);
+                renderTagsAlergias();
+            }
+            inputAlergiaTemporal.value = "";
+        }
+
+        function renderTagsPadecimientos() {
+            contenedorTagsPadecimientos.innerHTML = "";
+            listaPadecimientosTemporales.forEach((padecimiento, index) => {
+                const tag = document.createElement('span');
+                tag.className = "inline-flex items-center bg-slate-200 text-slate-800 text-xs font-medium px-2.5 py-1 rounded-lg gap-1";
+                tag.innerHTML = `
+                    ${padecimiento}
+                    <button type="button" class="text-slate-400 hover:text-slate-600 font-bold ml-0.5 focus:outline-none" data-index="${index}">✕</button>
+                `;
+                tag.querySelector('button').addEventListener('click', () => {
+                    listaPadecimientosTemporales.splice(index, 1);
+                    renderTagsPadecimientos();
+                });
+                contenedorTagsPadecimientos.appendChild(tag);
+            });
+        }
+
+        function agregarPadecimientoDesdeInput() {
+            const valor = inputPadecimientoTemporal.value.trim();
+            if (valor !== "" && !listaPadecimientosTemporales.includes(valor)) {
+                listaPadecimientosTemporales.push(valor);
+                renderTagsPadecimientos();
+            }
+            inputPadecimientoTemporal.value = "";
+        }
+
+        // Listeners para las Alergias
+        btnAgregarAlergia.addEventListener('click', agregarAlergiaDesdeInput);
+        inputAlergiaTemporal.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                agregarAlergiaDesdeInput();
+            }
+        });
+
+        // Listeners para los Padecimientos
+        btnAgregarPadecimiento.addEventListener('click', agregarPadecimientoDesdeInput);
+        inputPadecimientoTemporal.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                agregarPadecimientoDesdeInput();
+            }
+        });
+
+
+        // Control del Modal (Abrir)
         document.getElementById('btnAbrirModal').addEventListener('click', () => {
             modoEdicion = false;
             document.getElementById('modalTitulo').innerText = "Nuevo usuario";
             formUsuario.reset();
             document.getElementById('editUserId').value = "";
+            
+            // Limpiar listados temporales
+            listaAlergiasTemporales = [];
+            listaPadecimientosTemporales = [];
+            renderTagsAlergias();
+            renderTagsPadecimientos();
+
             modal.classList.remove('hidden');
         });
 
@@ -397,19 +512,21 @@
         document.getElementById('btnCerrarX').addEventListener('click', cerrarModal);
         document.getElementById('btnCancelar').addEventListener('click', cerrarModal);
 
-        // Guardar o Actualizar (Create & Update con Persistencia)
+        // Guardar o Actualizar
         formUsuario.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const alergiasArr = document.getElementById('formAlergias').value.split(',').map(s => s.trim()).filter(s => s !== "");
-            const padecimientosArr = document.getElementById('formPadecimientos').value.split(',').map(s => s.trim()).filter(s => s !== "");
+            // Asegurar que si dejaron texto escrito en los inputs sin presionar "+", se añada antes de guardar
+            agregarAlergiaDesdeInput();
+            agregarPadecimientoDesdeInput();
 
             const datosUsuario = {
                 nombre: document.getElementById('formNombre').value,
                 edad: document.getElementById('formEdad').value,
                 sangre: document.getElementById('formSangre').value,
-                alergias: alergiasArr,
-                padecimientos: padecimientosArr,
+                hospital: document.getElementById('formHospital').value,
+                alergias: [...listaAlergiasTemporales],
+                padecimientos: [...listaPadecimientosTemporales],
                 contacto: {
                     nombre: document.getElementById('formContNombre').value,
                     relacion: document.getElementById('formContRelacion').value,
@@ -430,7 +547,6 @@
                 usuarioSeleccionadoId = nuevoId;
             }
 
-            // Guardamos los cambios estructurales en el navegador
             guardarEnLocalStorage();
             cerrarModal();
             renderLista(inputBuscar.value);
@@ -449,17 +565,23 @@
             document.getElementById('formNombre').value = usuario.nombre;
             document.getElementById('formEdad').value = usuario.edad;
             document.getElementById('formSangre').value = usuario.sangre;
-            document.getElementById('formAlergias').value = usuario.alergias.join(', ');
-            document.getElementById('formPadecimientos').value = usuario.padecimientos.join(', ');
+            document.getElementById('formHospital').value = usuario.hospital || "";
+            
+            // Mapear los datos guardados a los controles temporales de tags
+            listaAlergiasTemporales = usuario.alergias ? [...usuario.alergias] : [];
+            listaPadecimientosTemporales = usuario.padecimientos ? [...usuario.padecimientos] : [];
+            renderTagsAlergias();
+            renderTagsPadecimientos();
+
             document.getElementById('formContNombre').value = usuario.contacto?.nombre || "";
             document.getElementById('formContRelacion').value = usuario.contacto?.relacion || "";
             document.getElementById('formContTel').value = usuario.contacto?.tel || "";
-            document.getElementById('formNotas').value = usuario.notas || "";
+            document.getElementById('formNotas').value = usuario.notes || usuario.notas || "";
 
             modal.classList.remove('hidden');
         });
 
-        // Eliminar (Delete con Persistencia)
+        // Eliminar
         document.getElementById('btnEliminar').addEventListener('click', () => {
             if (confirm("¿Estás seguro de que deseas eliminar este expediente médico?")) {
                 usuarios = usuarios.filter(u => u.id !== usuarioSeleccionadoId);

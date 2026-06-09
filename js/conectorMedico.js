@@ -71,28 +71,44 @@ const diccionarioMedico = {
 };
 
 /**
- * Función conectora para buscar términos médicos expandidos.
+ * Función conectora para buscar términos médicos expandidos (Soporta acentos y mayúsculas)
  */
 export function obtenerDefinicion(termino) {
     if (!termino) return "Término no especificado.";
     
-    const clave = termino.trim().toLowerCase();
+    // Función auxiliar para quitar acentos de manera eficiente
+    const normalizarTexto = (texto) => {
+        return texto
+            .trim()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, ""); // Remueve tildes manteniendo la 'ñ'
+    };
+
+    const terminoOriginal = termino.trim();
+    const claveLimpia = normalizarTexto(terminoOriginal);
     
-    // 1. Búsqueda exacta en minúsculas
-    if (diccionarioMedico[clave]) {
-        return diccionarioMedico[clave];
-    }
-    
-    // 2. Búsqueda directa para códigos de sangre con mayúsculas (A+, AB-, etc.)
-    if (diccionarioMedico[termino.trim()]) {
-        return diccionarioMedico[termino.trim()];
+    // 1. Búsqueda directa para códigos de sangre o términos exactos con mayúsculas (A+, AB-, Aspirina)
+    if (diccionarioMedico[terminoOriginal]) {
+        return diccionarioMedico[terminoOriginal];
     }
 
-    // 3. Intento de coincidencia parcial por si escriben cosas similares (Ej. "Diabetes" -> "diabetes tipo 2")
+    // 2. Búsqueda exacta mapeando las llaves del diccionario sin acentos
     const llaves = Object.keys(diccionarioMedico);
-    const coincidencia = llaves.find(llave => llave.includes(clave) || clave.includes(llave));
-    if (coincidencia) {
-        return `[Coincidencia para ${coincidencia}]: ${diccionarioMedico[coincidencia]}`;
+    
+    const llaveExacta = llaves.find(llave => normalizarTexto(llave) === claveLimpia);
+    if (llaveExacta) {
+        return diccionarioMedico[llaveExacta];
+    }
+    
+    // 3. Coincidencia parcial (por si escriben "Diabetes" o "Hiper")
+    const coincidenciaParcial = llaves.find(llave => {
+        const llaveNormalizada = normalizarTexto(llave);
+        return llaveNormalizada.includes(claveLimpia) || claveLimpia.includes(llaveNormalizada);
+    });
+
+    if (coincidenciaParcial) {
+        return `[Coincidencia para ${coincidenciaParcial}]: ${diccionarioMedico[coincidenciaParcial]}`;
     }
 
     return "Definición no encontrada en el catálogo local del conector. Verifique la ortografía o consulte el servidor central.";

@@ -35,24 +35,43 @@
     <script type="module">
         import { obtenerDefinicion } from './js/conectorMedico.js';
 
-        // 1. Sincronización Real de Base de Datos Local con el Panel Principal
+        // 1. Base de datos completa (15 usuarios semilla idénticos al panel principal)
         const usuariosSemilla = [
             { id: 1, nombre: "María García", edad: "34", sangre: "A+", hospital: "Hospital General de Especialidades Dr. Javier Buenfil Osorio", alergias: ["Mariscos", "Penicilina"], padecimientos: ["Diabetes tipo 2", "Hipertensión"], contacto: { nombre: "Carlos García", relacion: "Esposo", tel: "+52 981 123 4567" }, notas: "Paciente con control médico mensual. Toma metformina 500mg." },
             { id: 2, nombre: "Roberto Méndez", edad: "45", sangre: "O-", hospital: "Hospital General de Zona N1 IMSS", alergias: ["Polen"], padecimientos: ["Asma"], contacto: { nombre: "Laura Méndez", relacion: "Hermana", tel: "+52 981 765 4321" }, notas: "Usa inhalador de rescate en caso de crisis estacionales." },
-            { id: 3, nombre: "Sofía Ramírez", edad: "28", sangre: "B+", hospital: "Clínica del ISSSTE", alergias: [], padecimientos: [], contacto: { nombre: "Pedro Ramírez", relacion: "Padre", tel: "+52 999 555 1234" }, notas: "Sin observaciones médicas relevantes hasta la fecha." }
+            { id: 3, nombre: "Sofía Ramírez", edad: "28", sangre: "B+", hospital: "Clínica del ISSSTE", alergias: ["Látex", "Aspirina"], padecimientos: ["Migraña"], contacto: { nombre: "Pedro Ramírez", relacion: "Padre", tel: "+52 999 555 1234" }, notas: "Sensibilidad severa a analgésicos comunes del grupo de los AINEs." },
+            { id: 4, nombre: "Alejandro Mendoza", edad: "19", sangre: "O+", hospital: "Hospital General de Especialidades", alergias: ["Nueces", "Maní"], padecimientos: [], contacto: { nombre: "Elena Mendoza", relacion: "Madre", tel: "+52 981 111 2233" }, notas: "Carga consigo un autoinyector de epinefrina en la mochila de forma regular." },
+            { id: 5, nombre: "Beatriz Elena Soler", edad: "62", sangre: "AB+", hospital: "Hospital General de Zona N1 IMSS", alergias: [], padecimientos: ["Hipotiroidismo", "Artritis reumatoide"], contacto: { nombre: "Ricardo Soler", relacion: "Hijo", tel: "+52 981 444 5566" }, notas: "Tratamiento diario con Levotiroxina en ayunas." },
+            { id: 6, nombre: "Carlos Eduardo Ortiz", edad: "51", sangre: "A-", hospital: "Clínica del ISSSTE", alergias: ["Aspirina"], padecimientos: ["Hipertensión", "Insuficiencia renal"], contacto: { nombre: "Patricia Ortiz", relacion: "Hija", tel: "+52 981 888 9900" }, notas: "Restricción estricta de sodio en la dieta. Monitoreo de presión constante." },
+            { id: 7, nombre: "Diana Laura Flores", edad: "24", sangre: "B-", hospital: "Hospital General de Especialidades Dr. Javier Buenfil Osorio", alergias: ["Picadura de abeja"], padecimientos: ["Epilepsia"], contacto: { nombre: "Manuel Flores", relacion: "Padre", tel: "+52 981 222 3344" }, notas: "En tratamiento anticonvulsivo estricto. Evitar luces estroboscópicas." },
+            { id: 8, nombre: "Gabriel Heinz Vega", edad: "38", sangre: "O+", hospital: "Hospital General de Zona N1 IMSS", alergias: ["Trigo", "Leche"], padecimientos: ["Enfermedad celíaca"], contacto: { nombre: "Sofía Vega", relacion: "Esposa", tel: "+52 999 111 7788" }, notas: "Intolerancia severa y daño autoinmune por ingesta de gluten." },
+            { id: 9, nombre: "Lucía Fernanda Paz", edad: "29", sangre: "AB-", hospital: "Hospital General de Especialidades", alergias: ["Ácaros", "Polen"], padecimientos: ["Asma"], contacto: { nombre: "Andrés Paz", relacion: "Hermano", tel: "+52 981 102 9384" }, notas: "Crisis asmáticas detonadas recurrentemente por cambios bruscos de clima." },
+            { id: 10, nombre: "Ricardo Javier Trejo", edad: "57", sangre: "O-", hospital: "Clínica del ISSSTE", alergias: [], padecimientos: ["Cardiopatía isquémica", "Hipertensión"], contacto: { nombre: "Adriana Trejo", relacion: "Esposa", tel: "+52 981 475 1122" }, notas: "Portador de stent coronario colocado hace 1 año. Toma anticoagulantes." },
+            { id: 11, nombre: "Valeria Sofía Cruz", edad: "41", sangre: "A+", hospital: "Hospital General de Zona N1 IMSS", alergias: ["Penicilina"], padecimientos: ["Lupus", "Anemia crónica"], contacto: { nombre: "Jorge Cruz", relacion: "Padre", tel: "+52 999 321 4365" }, notas: "Tratamiento inmunosupresor activo. Monitorear recuentos hemáticos." },
+            { id: 12, nombre: "Mauricio Alan Gomez", edad: "33", sangre: "B+", hospital: "Hospital General de Especialidades", alergias: ["Mariscos"], padecimientos: ["Ansiedad crónica"], contacto: { nombre: "Mónica Gomez", relacion: "Madre", tel: "+52 981 813 5500" }, notas: "Propensión a ataques de pánico en situaciones de confinamiento médico." },
+            { id: 13, nombre: "Elena Rostova Vega", edad: "70", sangre: "O+", hospital: "Clínica del ISSSTE", alergias: ["Látex"], padecimientos: ["Alzheimer", "Osteoporosis"], contacto: { nombre: "Dmitri Vega", relacion: "Hijo", tel: "+52 981 152 7744" }, notas: "Paciente dependiente de cuidados constantes por desorientación avanzada." },
+            { id: 14, nombre: "Héctor Manuel Lugo", edad: "48", sangre: "A+", hospital: "Hospital General de Zona N1 IMSS", alergias: ["Huevo"], padecimientos: ["Epoc"], contacto: { nombre: "Rosa Lugo", relacion: "Hija", tel: "+52 981 112 3344" }, notas: "Ex-fumador severo con requerimiento de oxigenoterapia nocturna." },
+            { id: 15, nombre: "Patricia Inés Sosa", edad: "26", sangre: "O+", hospital: "Hospital General de Especialidades Dr. Javier Buenfil Osorio", alergias: ["Soja", "Maní"], padecimientos: ["Enfermedad de crohn"], contacto: { nombre: "Esteban Sosa", relacion: "Hermano", tel: "+52 999 445 1299" }, notas: "En tratamiento biológico. Monitorear síntomas inflamatorios estomacales." }
         ];
 
-        // Jalamos los datos actualizados del LocalStorage
-        const usuarios = JSON.parse(localStorage.getItem('usuariosMedicos')) || usuariosSemilla;
+        // 2. Comprobación y Sincronización Dinámica con LocalStorage
+        let usuariosGuardados = JSON.parse(localStorage.getItem('usuariosMedicos'));
 
-        // 2. Leer el ID que viene en la URL (?id=X) de manera segura
+        if (!usuariosGuardados || usuariosGuardados.length < usuariosSemilla.length) {
+            localStorage.setItem('usuariosMedicos', JSON.stringify(usuariosSemilla));
+            usuariosGuardados = usuariosSemilla;
+        }
+
+        const usuarios = usuariosGuardados;
+
+        // 3. Leer el ID que viene en la URL (?id=X)
         const urlParams = new URLSearchParams(window.location.search);
         const usuarioId = parseInt(urlParams.get('id'));
 
         const contenedor = document.getElementById('contenidoExpediente');
         document.getElementById('fechaConsulta').innerText = new Date().toLocaleString();
 
-        // 3. Buscar al usuario mitigando valores NaN o nulos
+        // 4. Buscar al usuario
         const usuario = isNaN(usuarioId) ? null : usuarios.find(u => u.id === usuarioId);
 
         if (!usuario) {
@@ -64,7 +83,7 @@
                 </div>
             `;
         } else {
-            // 4. Inyectar la estructura de la Tabla Informativa completa
+            // 5. Inyectar la estructura de la Tabla Informativa completa
             contenedor.innerHTML = `
                 <div class="flex items-center space-x-4 border-b border-slate-100 pb-4">
                     <div class="w-14 h-14 bg-[#1D4ED8] text-white flex items-center justify-center text-xl font-bold rounded-full shadow-md">
@@ -133,7 +152,7 @@
                             <tr class="hover:bg-slate-50 transition">
                                 <td class="px-4 py-3 font-semibold text-[#1E3A8A] bg-slate-50/50">📄 Notas Clínicas</td>
                                 <td class="px-4 py-3 text-xs text-slate-600 leading-relaxed">
-                                    ${usuario.notas || 'Sin anotaciones adicionales.'}
+                                    ${usuario.notas || usuario.notes || 'Sin anotaciones adicionales.'}
                                 </td>
                             </tr>
                         </tbody>

@@ -29,7 +29,7 @@ const diccionarioMedico = {
     "trigo": "Reacción alérgica a las proteínas del trigo (incluido el gluten). Difiere de la enfermedad celíaca al activar una respuesta de anticuerpos IgE.",
     "picadura de abeja": "Hipersensibilidad al veneno de los apitoxinas. Puede causar hinchazón local extrema o reacciones sistémicas mortales si no se aplica epinefrina.",
     "ácaros": "Reacción alérgica al polvo doméstico y los desechos de ácaros microscópicos. Principal detonante de asma bronquial en el hogar.",
-    "Aspirina": "Intolerancia o reacción alérgica al ácido acetilsalicílico y otros AINEs. Puede causar broncoespasmos o urticaria severa.",
+    "aspirina": "Intolerancia o reacción alérgica al ácido acetilsalicílico y otros AINEs. Puede causar broncoespasmos o urticaria severa.",
 
     // ==========================================
     // SYSTEM: PADECIMIENTOS CRÓNICOS (PATOLOGÍAS)
@@ -39,7 +39,7 @@ const diccionarioMedico = {
     "hipertension": "Trastorno cardiovascular donde la presión arterial sistólica/diastólica se eleva de forma sostenida, dañando vasos sanguíneos y corazón.",
     "asma": "Afección inflamatoria crónica de las vías respiratorias que produce sibilancias, disnea, opresión en el pecho y tos.",
     "hipotiroidismo": "Deficiencia hormonal causada por una actividad subóptima de la glándula tiroides, ralentizando el metabolismo general.",
-    "hipertiroidismo": "Producción excessive de hormonas tiroideas que acelera el metabolismo del cuerpo, causando pérdida de peso y taquicardias.",
+    "hipertiroidismo": "Producción excesiva de hormonas tiroideas que acelera el metabolismo del cuerpo, causando pérdida de peso y taquicardias.",
     "artritis reumatoide": "Enfermedad inflamatoria autoinmune crónica que afecta principalmente a las articulaciones, causando dolor, hinchazón y deformidad.",
     "insuficiencia renal": "Pérdida progresiva de la capacidad de los riñones para filtrar los desechos del flujo sanguíneo, requiriendo control estricto o diálisis.",
     "epilepsia": "Trastorno del sistema nervioso central en el que la actividad cerebral se altera, provocando convulsiones o períodos de comportamiento inusual.",
@@ -64,10 +64,10 @@ const diccionarioMedico = {
     "gota": "Forma dolorosa de artritis reactiva provocada por la cristalización y acumulación de ácido úrico en el interior y alrededor de las articulaciones.",
     "psoriasis": "Afección cutánea inflamatoria de origen inmunitario que acelera el ciclo de vida de las células de la piel, provocando la aparición de placas escamosas y prurito.",
     "ansiedad cronica": "Trastorno emocional prolongado caracterizado por una preocupación y un miedo excesivos, persistentes y difíciles de controlar ante situaciones cotidianas.",
-    "depresion mayor": "Trastorno del estado de ánimo grave y recurrente que causa sentimientos persistentes de tristeza, pérdida de interés y una alteración funcional en el día a día.",
+    "depresion mayor": "Trastorno del estado de ánimo grave y recurrente que causa sentimientos primitivos de tristeza, pérdida de interés y una alteración funcional en el día a día.",
     "arritmia cardiaca": "Cualquier alteración en el ritmo o frecuencia de los latidos del corazón, haciendo que este lata de manera demasiado rápida, lenta o irregular.",
     "glaucoma": "Grupo de afecciones oculares que dañan progresivamente el nervio óptico, a menudo debido a una presión intraocular anormalmente alta, siendo causa principal de ceguera.",
-    "vih": "Virus de la Inmunodeficiencia Humana que ataca y destruye las células del sistema inmunitario (linfocitos T CD4), debilitando las defenses del organismo ante infecciones."
+    "vih": "Virus de la Inmunodeficiencia Humana que ataca y destruye las células del sistema inmunitario (linfocitos T CD4), debilitando las defensas del organismo ante infecciones."
 };
 
 /**
@@ -88,27 +88,28 @@ export function obtenerDefinicion(termino) {
     const terminoOriginal = termino.trim();
     const claveLimpia = normalizarTexto(terminoOriginal);
     
-    // 1. Búsqueda directa para códigos de sangre o términos exactos con mayúsculas (A+, AB-, Aspirina)
+    // 1. Búsqueda directa (Excelente para tipos de sangre exactos como A+, AB-)
     if (diccionarioMedico[terminoOriginal]) {
         return diccionarioMedico[terminoOriginal];
     }
 
-    // 2. Búsqueda exacta mapeando las llaves del diccionario sin acentos
+    // 2. Búsqueda exacta mapeando las llaves sin acentos
     const llaves = Object.keys(diccionarioMedico);
-    
     const llaveExacta = llaves.find(llave => normalizarTexto(llave) === claveLimpia);
     if (llaveExacta) {
         return diccionarioMedico[llaveExacta];
     }
     
-    // 3. Coincidencia parcial (por si escriben "Diabetes" o "Hiper")
-    const coincidenciaParcial = llaves.find(llave => {
-        const llaveNormalizada = normalizarTexto(llave);
-        return llaveNormalizada.includes(claveLimpia) || claveLimpia.includes(llaveNormalizada);
-    });
+    // 3. Coincidencia parcial protegida (Requiere un término de búsqueda de al menos 3 caracteres)
+    if (claveLimpia.length >= 3) {
+        const coincidenciaParcial = llaves.find(llave => {
+            const llaveNormalizada = normalizarTexto(llave);
+            return llaveNormalizada.includes(claveLimpia);
+        });
 
-    if (coincidenciaParcial) {
-        return `[Coincidencia para ${coincidenciaParcial}]: ${diccionarioMedico[coincidenciaParcial]}`;
+        if (coincidenciaParcial) {
+            return diccionarioMedico[coincidenciaParcial];
+        }
     }
 
     return "Definición no encontrada en el catálogo local del conector. Verifique la ortografía o consulte el servidor central.";

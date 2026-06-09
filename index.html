@@ -156,7 +156,7 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-[#1E3A8A] mb-1.5">Hospital de Traslado / Preferencia</label>
-                        <input type="text" id="formHospital" placeholder="Ej. Hospital General de Especialidades, IMSS Clínica 1" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2.5 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
+                        <input type="text" id="formHospital" placeholder="Ej. Hospital General, IMSS Clínica 1" class="w-full bg-[#EFF4FC] border border-transparent rounded-xl px-4 py-2.5 text-sm placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-400 transition">
                     </div>
 
                     <div>
@@ -237,7 +237,7 @@
         import { obtenerDefinicion } from './js/conectorMedico.js';
 
         // =========================================================================
-        // 💾 PERSISTENCIA: Base de Datos Inicializada o Cargada desde LocalStorage
+        // 💾 PERSISTENCIA Y LISTA DE PACIENTES TOTALMENTE COMPLETA (8 PACIENTES)
         // =========================================================================
         const usuariosSemilla = [
             {
@@ -248,8 +248,8 @@
                 hospital: "Hospital General de Especialidades Dr. Javier Buenfil Osorio",
                 alergias: ["Mariscos", "Penicilina"],
                 padecimientos: ["Diabetes tipo 2", "Hipertensión"],
-                contacto: { nombre: "Carlos García", relacion: "Esposo", tel: "+52 55 1234 5678" },
-                notes: "Paciente con control médico mensual. Toma metformina 500mg."
+                contacto: { nombre: "Carlos García", relacion: "Esposo", tel: "+52 981 123 4567" },
+                notas: "Paciente con control médico mensual. Toma metformina 500mg."
             },
             {
                 id: 2,
@@ -259,7 +259,7 @@
                 hospital: "Hospital General de Zona N1 IMSS",
                 alergias: ["Polen"],
                 padecimientos: ["Asma"],
-                contacto: { nombre: "Laura Méndez", relacion: "Hermana", tel: "+52 55 8765 4321" },
+                contacto: { nombre: "Laura Méndez", relacion: "Hermana", tel: "+52 981 765 4321" },
                 notas: "Usa inhalador de rescate en caso de crisis estacionales."
             },
             {
@@ -267,11 +267,66 @@
                 nombre: "Sofía Ramírez",
                 edad: "28",
                 sangre: "B+",
-                hospital: "",
-                alergias: [],
+                hospital: "Clínica del ISSSTE",
+                alergias: ["Látex", "Aspirina"],
+                padecimientos: ["Migraña"],
+                contacto: { nombre: "Pedro Ramírez", relacion: "Padre", tel: "+52 999 555 1234" },
+                notas: "Sensibilidad severa a analgésicos comunes del grupo de los AINEs."
+            },
+            {
+                id: 4,
+                nombre: "Alejandro Mendoza",
+                edad: "19",
+                sangre: "O+",
+                hospital: "Hospital General de Especialidades",
+                alergias: ["Nueces", "Maní"],
                 padecimientos: [],
-                contacto: { nombre: "Pedro Ramírez", relacion: "Padre", tel: "+52 55 5555 1234" },
-                notas: "Sin observaciones médicas relevantes hasta la fecha."
+                contacto: { nombre: "Elena Mendoza", relacion: "Madre", tel: "+52 981 111 2233" },
+                notas: "Carga consigo un autoinyector de epinefrina en la mochila de forma regular."
+            },
+            {
+                id: 5,
+                nombre: "Beatriz Elena Soler",
+                edad: "62",
+                sangre: "AB+",
+                hospital: "Hospital General de Zona N1 IMSS",
+                alergias: [],
+                padecimientos: ["Hipotiroidismo", "Artritis reumatoide"],
+                contacto: { nombre: "Ricardo Soler", relacion: "Hijo", tel: "+52 981 444 5566" },
+                notas: "Tratamiento diario con Levotiroxina en ayunas."
+            },
+            {
+                id: 6,
+                nombre: "Carlos Eduardo Ortiz",
+                edad: "51",
+                sangre: "A-",
+                hospital: "Clínica del ISSSTE",
+                alergias: ["Sulfa"],
+                padecimientos: ["Hipertensión", "Insuficiencia renal"],
+                contacto: { nombre: "Patricia Ortiz", relacion: "Hija", tel: "+52 981 888 9900" },
+                notas: "Restricción estricta de sodio en la dieta. Monitoreo de presión constante."
+            },
+            {
+                id: 7,
+                nombre: "Diana Laura Flores",
+                edad: "24",
+                sangre: "B-",
+                hospital: "Hospital General de Especialidades Dr. Javier Buenfil Osorio",
+                alergias: ["Picadura de abeja"],
+                padecimientos: ["Epilepsia"],
+                contacto: { nombre: "Manuel Flores", relacion: "Padre", tel: "+52 981 222 3344" },
+                notas: "En tratamiento anticonvulsivo severo. Evitar luces estroboscópicas."
+            },
+            {
+                id: 8,
+                nombre: "Gabriel Heinz Vega",
+                edad: "38",
+                sangre: "O+",
+                hospital: "Hospital General de Zona N1 IMSS",
+                alergias: ["Trigo", "Leche"],
+                padecimientos: ["Enfermedad celíaca"],
+                contacto: { nombre: "Sofía Vega", relacion: "Esposa", tel: "+52 999 111 7788" },
+                notas: "Intolerancia severa y daño autoinmune por ingesta de gluten."
             }
         ];
 
@@ -308,7 +363,7 @@
         const qrPlaceholder = document.getElementById('qrPlaceholder');
         const btnDescargarQR = document.getElementById('btnDescargarQR');
 
-        // Nuevos Elementos para control de etiquetas dinámicas
+        // Control de etiquetas dinámicas
         const inputAlergiaTemporal = document.getElementById('inputAlergiaTemporal');
         const btnAgregarAlergia = document.getElementById('btnAgregarAlergia');
         const contenedorTagsAlergias = document.getElementById('contenedorTagsAlergias');
@@ -365,9 +420,12 @@
             nombrePaciente.innerText = usuario.nombre;
             edadPaciente.innerText = `${usuario.edad || '--'} años`;
             avatarPaciente.innerText = usuario.nombre.charAt(0).toUpperCase();
-            notasPaciente.innerText = usuario.notes || usuario.notas || "Sin notas adicionales.";
             
-            // Renderizar campo del hospital asignado
+            // Unificado y corregido a la propiedad estándar en español
+            notasPaciente.innerText = usuario.notas && usuario.notas.trim() !== "" 
+                ? usuario.notas 
+                : "Sin notas adicionales.";
+            
             hospitalPaciente.innerText = usuario.hospital && usuario.hospital.trim() !== "" 
                 ? usuario.hospital 
                 : "No especificado (Trasladar a la clínica de urgencias más cercana)";
@@ -396,7 +454,7 @@
             contactoRelacion.innerText = usuario.contacto?.relacion || "";
             contactoTel.innerText = usuario.contacto?.tel ? `📞 ${usuario.contacto.tel}` : "📞 --";
 
-            // Control de código QR
+            // Control de carga del QR
             qrPaciente.classList.add('hidden');
             qrPlaceholder.classList.remove('hidden');
 
@@ -406,7 +464,6 @@
 
             const urlDestino = `${baseServerUrl}${rutaLimpia}/ver_expediente.html?id=${usuario.id}`;
             const qrData = encodeURIComponent(urlDestino);
-
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}`;
 
             qrPaciente.src = qrUrl;
@@ -473,7 +530,6 @@
             inputPadecimientoTemporal.value = "";
         }
 
-        // Listeners para las Alergias
         btnAgregarAlergia.addEventListener('click', agregarAlergiaDesdeInput);
         inputAlergiaTemporal.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -482,7 +538,6 @@
             }
         });
 
-        // Listeners para los Padecimientos
         btnAgregarPadecimiento.addEventListener('click', agregarPadecimientoDesdeInput);
         inputPadecimientoTemporal.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -491,7 +546,6 @@
             }
         });
 
-
         // Control del Modal (Abrir)
         document.getElementById('btnAbrirModal').addEventListener('click', () => {
             modoEdicion = false;
@@ -499,7 +553,6 @@
             formUsuario.reset();
             document.getElementById('editUserId').value = "";
             
-            // Limpiar listados temporales
             listaAlergiasTemporales = [];
             listaPadecimientosTemporales = [];
             renderTagsAlergias();
@@ -516,7 +569,6 @@
         formUsuario.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            // Asegurar que si dejaron texto escrito en los inputs sin presionar "+", se añada antes de guardar
             agregarAlergiaDesdeInput();
             agregarPadecimientoDesdeInput();
 
@@ -567,7 +619,6 @@
             document.getElementById('formSangre').value = usuario.sangre;
             document.getElementById('formHospital').value = usuario.hospital || "";
             
-            // Mapear los datos guardados a los controles temporales de tags
             listaAlergiasTemporales = usuario.alergias ? [...usuario.alergias] : [];
             listaPadecimientosTemporales = usuario.padecimientos ? [...usuario.padecimientos] : [];
             renderTagsAlergias();
@@ -576,7 +627,7 @@
             document.getElementById('formContNombre').value = usuario.contacto?.nombre || "";
             document.getElementById('formContRelacion').value = usuario.contacto?.relacion || "";
             document.getElementById('formContTel').value = usuario.contacto?.tel || "";
-            document.getElementById('formNotas').value = usuario.notes || usuario.notas || "";
+            document.getElementById('formNotas').value = usuario.notas || "";
 
             modal.classList.remove('hidden');
         });
